@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Segunda Vocal Pro - Fade Suave</title>
+    <title>Segunda Vocal Pro - Fade Ajustável</title>
     <style>
         * {
             box-sizing: border-box;
@@ -133,21 +133,34 @@
             box-shadow: 0 0 8px #f97316;
         }
         
-        /* Volume */
-        .volume-control {
+        /* Controles de Volume e Fade */
+        .controles-painel {
+            margin-bottom: 24px;
+        }
+        .controle-item {
             background: #1a1b2f;
             border-radius: 60px;
             padding: 12px 20px;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
         }
-        .volume-control label {
+        .controle-item label {
             font-size: 0.85rem;
             font-weight: bold;
             color: #facc15;
+            min-width: 70px;
+        }
+        .controle-item span {
+            background: #0a0a1a;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 55px;
+            text-align: center;
         }
         input[type="range"] {
             flex: 1;
@@ -163,15 +176,6 @@
             background: #f97316;
             border-radius: 50%;
             cursor: pointer;
-        }
-        .volume-valor {
-            background: #0a0a1a;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            min-width: 55px;
-            text-align: center;
         }
         
         /* Notas sugeridas */
@@ -255,7 +259,7 @@
 <body>
 <div class="container">
     <h1>🎤 SEGUNDA VOZ</h1>
-    <div class="subtitulo">Fade suave · Sem sustos · Volume ajustável</div>
+    <div class="subtitulo">Fade ajustável · Volume · Sem sustos</div>
 
     <div class="card">
         <!-- Seletor de nota base + acidentes -->
@@ -275,7 +279,7 @@
             </div>
         </div>
 
-        <!-- Display da nota atual (com acidente) -->
+        <!-- Display da nota atual -->
         <div class="nota-atual-display">
             <div class="nota-atual-box" id="notaAtualDisplay">Fá</div>
         </div>
@@ -286,11 +290,18 @@
             <button id="btnMenor" class="btn-modo">MENOR</button>
         </div>
 
-        <!-- Volume -->
-        <div class="volume-control">
-            <label>🔊 Volume</label>
-            <input type="range" id="volumeSlider" min="0" max="100" value="35">
-            <span id="volumePercent" class="volume-valor">35%</span>
+        <!-- Controles: Volume e Fade -->
+        <div class="controles-painel">
+            <div class="controle-item">
+                <label>🔊 Volume</label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="35">
+                <span id="volumePercent">35%</span>
+            </div>
+            <div class="controle-item">
+                <label>⏺ Fade (s)</label>
+                <input type="range" id="fadeSlider" min="0.1" max="1.5" step="0.01" value="0.6">
+                <span id="fadeValue">0.60s</span>
+            </div>
         </div>
 
         <!-- Lista de segundas vozes -->
@@ -298,7 +309,7 @@
 
         <!-- Botão parar -->
         <button id="pararTudoBtn" class="parar-global">🔇 PARAR TODAS AS NOTAS</button>
-        <div class="status" id="statusMsg">🎧 Fade suave de 0.5s - sem sustos</div>
+        <div class="status" id="statusMsg">🎧 Ajuste o Fade (0.1s a 1.5s) para o som ficar perfeito</div>
     </div>
 
     <footer>
@@ -367,8 +378,9 @@
     let oscAtual = null;
     let gainAtual = null;
     let volumeAtual = 0.35;
+    let fadeTime = 0.6;  // segundos (padrão 0.6)
     
-    // ========== FUNÇÕES COM FADE PROFISSIONAL ==========
+    // ========== FUNÇÕES COM FADE AJUSTÁVEL ==========
     
     function initAudio() {
         if (!audioCtx) {
@@ -384,15 +396,20 @@
         volumeAtual = Math.min(1, Math.max(0, valorPorcento / 100));
         document.getElementById('volumePercent').innerText = Math.round(valorPorcento) + '%';
         if (gainAtual && audioCtx) {
-            // Fade suave ao mudar volume enquanto toca
-            gainAtual.gain.linearRampToValueAtTime(volumeAtual, audioCtx.currentTime + 0.1);
+            gainAtual.gain.linearRampToValueAtTime(volumeAtual, audioCtx.currentTime + fadeTime);
         }
+    }
+    
+    function setFadeTime(valor) {
+        fadeTime = parseFloat(valor);
+        document.getElementById('fadeValue').innerText = fadeTime.toFixed(2) + 's';
+        document.getElementById('statusMsg').innerHTML = `⏺ Fade ajustado para ${fadeTime.toFixed(2)} segundos`;
     }
     
     function pararTudo() {
         if (oscAtual && gainAtual && audioCtx) {
-            // FADE OUT de 0.4 segundos (bem suave)
-            gainAtual.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+            // FADE OUT com o tempo ajustado pelo usuário
+            gainAtual.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeTime);
             setTimeout(() => {
                 try { 
                     if (oscAtual) {
@@ -402,14 +419,14 @@
                 } catch(e) {}
                 oscAtual = null;
                 gainAtual = null;
-            }, 450);
+            }, (fadeTime * 1000) + 50);
         } else if (oscAtual) {
             try { 
                 oscAtual.stop();
                 oscAtual = null;
             } catch(e) {}
         }
-        document.getElementById('statusMsg').innerHTML = '🔇 Parado. Fade out suave de 0.4s';
+        document.getElementById('statusMsg').innerHTML = `🔇 Parado. Fade out de ${fadeTime.toFixed(2)}s`;
     }
     
     function tocarNotaConstante(notaNome, freqOriginal) {
@@ -417,7 +434,7 @@
         
         // Para o som atual com fade out suave ANTES de tocar o novo
         if (oscAtual && gainAtual) {
-            gainAtual.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.35);
+            gainAtual.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
             setTimeout(() => {
                 try { 
                     if (oscAtual) {
@@ -429,7 +446,7 @@
                 gainAtual = null;
                 // Só toca o novo depois que o anterior terminou o fade
                 tocarNovo(notaNome, freqOriginal);
-            }, 400);
+            }, (fadeTime * 1000) + 30);
         } else {
             tocarNovo(notaNome, freqOriginal);
         }
@@ -449,8 +466,8 @@
             // Começa mudo (volume 0)
             gain.gain.value = 0;
             
-            // FADE IN de 0.4 segundos (entrada super suave)
-            gain.gain.linearRampToValueAtTime(volumeAtual, ctx.currentTime + 0.4);
+            // FADE IN com o tempo ajustado pelo usuário
+            gain.gain.linearRampToValueAtTime(volumeAtual, ctx.currentTime + fadeTime);
             
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -459,7 +476,7 @@
             oscAtual = osc;
             gainAtual = gain;
             
-            document.getElementById('statusMsg').innerHTML = `🎵 Drone: ${notaNome} · ${freqOriginal.toFixed(1)} Hz · Fade in 0.4s · volume ${Math.round(volumeAtual*100)}%`;
+            document.getElementById('statusMsg').innerHTML = `🎵 Drone: ${notaNome} · ${freqOriginal.toFixed(1)} Hz · Fade ${fadeTime.toFixed(2)}s · vol ${Math.round(volumeAtual*100)}%`;
             
             osc.onended = () => {
                 if (oscAtual === osc) {
@@ -582,17 +599,19 @@
     document.getElementById('btnMenor').addEventListener('click', () => setModo('menor'));
     document.getElementById('pararTudoBtn').addEventListener('click', pararTudo);
     document.getElementById('volumeSlider').addEventListener('input', (e) => setVolume(parseInt(e.target.value)));
+    document.getElementById('fadeSlider').addEventListener('input', (e) => setFadeTime(e.target.value));
     
     // Inicialização
     atualizarNotaReal();
     atualizarTudo();
     setVolume(35);
+    setFadeTime(0.6);
     
     // Ativa áudio no primeiro toque
     function ativarAudio() {
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
-            document.getElementById('statusMsg').innerHTML = '🎧 Áudio ativado! Fade suave de 0.4s';
+            document.getElementById('statusMsg').innerHTML = `🎧 Áudio ativado! Fade atual: ${fadeTime.toFixed(2)}s`;
         }
     }
     document.body.addEventListener('touchstart', ativarAudio, { once: true });
