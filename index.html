@@ -6,7 +6,6 @@
     
     <title>Segunda Voz</title>
     
-    <!-- Nome do app para iOS e Android -->
     <meta name="apple-mobile-web-app-title" content="Segunda Voz">
     <meta name="application-name" content="Segunda Voz">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +14,6 @@
     <meta name="theme-color" content="#0a0a1a">
     <meta name="background-color" content="#0a0a1a">
     
-    <!-- Ícone -->
     <link rel="icon" type="image/png" sizes="512x512" href="logo.png">
     <link rel="apple-touch-icon" sizes="512x512" href="logo.png">
     <link rel="apple-touch-icon-precomposed" sizes="512x512" href="logo.png">
@@ -32,7 +30,6 @@
             background: #0a0a1a;
             margin: 0;
             padding: 0;
-            /* 🔥 CORREÇÃO PRINCIPAL: Respeita a área segura do celular (notch/furo) */
             padding-top: max(16px, env(safe-area-inset-top));
             padding-bottom: max(16px, env(safe-area-inset-bottom));
             padding-left: max(12px, env(safe-area-inset-left));
@@ -41,13 +38,17 @@
             min-height: 100vh;
         }
         
+        /* 🔥 MODO PALCO: impede tela de desligar */
+        body.palco-ativo {
+            background: #0a0a1a;
+        }
+        
         .container {
             max-width: 550px;
             margin: 0 auto;
             width: 100%;
         }
         
-        /* Título mais compacto */
         h1 {
             font-size: 1.4rem;
             text-align: center;
@@ -71,6 +72,37 @@
             border-radius: 28px;
             padding: 14px 14px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        /* 🔥 NOVO: Seletor de modo (Normal / Palco) */
+        .modo-apresentacao {
+            background: #1a1b2f;
+            border-radius: 60px;
+            padding: 6px;
+            margin-bottom: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-modo-apresentacao {
+            flex: 1;
+            background: #1e1f32;
+            border: none;
+            color: #b9c0d4;
+            padding: 8px 0;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        
+        .btn-modo-apresentacao.ativo {
+            background: #f97316;
+            color: #0a0a1a;
+            box-shadow: 0 0 6px #f97316;
         }
         
         .seletor-nota {
@@ -315,6 +347,12 @@
     <div class="subtitulo">SUA HARMONIA EM 3 NOTAS</div>
 
     <div class="card">
+        <!-- 🔥 NOVO: Seletor de Modo (Normal / Palco) -->
+        <div class="modo-apresentacao">
+            <button id="btnModoNormal" class="btn-modo-apresentacao ativo">📱 Normal</button>
+            <button id="btnModoPalco" class="btn-modo-apresentacao">🎤 Modo Palco</button>
+        </div>
+        
         <div class="seletor-nota">
             <select id="notaBaseSelect">
                 <option value="C">Dó</option>
@@ -412,9 +450,58 @@
     let volumeAtual = 0.35;
     let fadeTime = 0.6;
     
+    // 🔥 Controle do Modo Palco
+    let wakeLock = null;
+    let modoPalcoAtivo = false;
+    
+    // 🔥 Função para manter tela ligada (Modo Palco)
+    async function ativarWakeLock() {
+        if ('wakeLock' in navigator && !wakeLock) {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                document.getElementById('statusMsg').innerHTML = '🎤 Modo Palco ativo · Tela sempre ligada';
+                return true;
+            } catch (err) {
+                document.getElementById('statusMsg').innerHTML = '⚠️ Modo Palco não suportado neste dispositivo';
+                return false;
+            }
+        } else {
+            document.getElementById('statusMsg').innerHTML = '⚠️ Seu navegador não suporta tela sempre ligada';
+            return false;
+        }
+    }
+    
+    function desativarWakeLock() {
+        if (wakeLock) {
+            wakeLock.release();
+            wakeLock = null;
+            document.getElementById('statusMsg').innerHTML = `📱 Modo Normal · fade ${fadeTime.toFixed(1)}s`;
+        }
+    }
+    
+    // Alterna entre Modo Normal e Modo Palco
+    function setModoPalco(ativar) {
+        modoPalcoAtivo = ativar;
+        if (ativar) {
+            ativarWakeLock();
+            // Reativa áudio se estiver suspenso
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        } else {
+            desativarWakeLock();
+        }
+    }
+    
     function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended' && modoPalcoAtivo) {
+            audioCtx.resume();
+        } else if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
         return audioCtx;
     }
     
@@ -441,7 +528,9 @@
             try { oscAtual.stop(); } catch(e) {}
             oscAtual = null;
         }
-        document.getElementById('statusMsg').innerHTML = `🔇 Parado · Fade ${fadeTime.toFixed(1)}s`;
+        if (!modoPalcoAtivo) {
+            document.getElementById('statusMsg').innerHTML = `🔇 Parado · Fade ${fadeTime.toFixed(1)}s`;
+        }
     }
     
     function tocarNotaConstante(notaNome, freqOriginal) {
@@ -473,7 +562,9 @@
             osc.start();
             oscAtual = osc;
             gainAtual = gain;
-            document.getElementById('statusMsg').innerHTML = `🎵 ${notaNome} · ${freqOriginal.toFixed(0)}Hz · fade ${fadeTime.toFixed(1)}s`;
+            if (!modoPalcoAtivo) {
+                document.getElementById('statusMsg').innerHTML = `🎵 ${notaNome} · ${freqOriginal.toFixed(0)}Hz · fade ${fadeTime.toFixed(1)}s`;
+            }
             osc.onended = () => { if (oscAtual === osc) { oscAtual = null; gainAtual = null; } };
         } catch(e) { document.getElementById('statusMsg').innerHTML = '⚠️ Toque novamente'; }
     }
@@ -542,6 +633,35 @@
         });
     }
     
+    // Reativa áudio ao voltar para o app
+    function reativarAudioAoTornarVisivel() {
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                if (modoPalcoAtivo) {
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                    ativarWakeLock();
+                } else if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }
+        });
+    }
+    
+    // ========== EVENTOS ==========
+    document.getElementById('btnModoNormal').addEventListener('click', () => {
+        document.getElementById('btnModoNormal').classList.add('ativo');
+        document.getElementById('btnModoPalco').classList.remove('ativo');
+        setModoPalco(false);
+    });
+    
+    document.getElementById('btnModoPalco').addEventListener('click', () => {
+        document.getElementById('btnModoPalco').classList.add('ativo');
+        document.getElementById('btnModoNormal').classList.remove('ativo');
+        setModoPalco(true);
+    });
+    
     document.getElementById('notaBaseSelect').addEventListener('change', (e) => setNotaNatural(e.target.value));
     document.getElementById('btnSustenido').addEventListener('click', () => aplicarAcidente('sustenido'));
     document.getElementById('btnBemol').addEventListener('click', () => aplicarAcidente('bemol'));
@@ -556,11 +676,13 @@
     atualizarTudo();
     setVolume(35);
     setFadeTime(0.6);
+    reativarAudioAoTornarVisivel();
     
     function ativarAudio() {
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
-            document.getElementById('statusMsg').innerHTML = `🎧 Áudio ativo · fade ${fadeTime.toFixed(1)}s`;
+        } else if (!audioCtx) {
+            initAudio();
         }
     }
     document.body.addEventListener('touchstart', ativarAudio, { once: true });
