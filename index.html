@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     
-    <!-- Título do app -->
     <title>Segunda Vocal - Jhony Beraldo</title>
     
-    <!-- ÍCONE PARA O CELULAR (logo.png) -->
+    <!-- ÍCONE 1:1 SEM BORDAS BRANCAS -->
     <link rel="icon" type="image/png" sizes="512x512" href="logo.png">
     <link rel="apple-touch-icon" sizes="512x512" href="logo.png">
     <link rel="apple-touch-icon-precomposed" sizes="512x512" href="logo.png">
     
-    <!-- Configuração para instalar como app no celular -->
+    <!-- Meta tags para app no celular -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Segunda Vocal">
+    <meta name="apple-mobile-web-app-title" content="Segunda Voz">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0a0a1a">
     <meta name="background-color" content="#0a0a1a">
@@ -26,6 +25,7 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
+        
         body {
             font-family: system-ui, 'Segoe UI', sans-serif;
             background: #0a0a1a;
@@ -33,10 +33,18 @@
             padding: 16px;
             color: #ededee;
         }
+        
+        /* FORÇA O ÍCONE A NÃO TER BORDAS BRANCAS */
+        apple-touch-icon {
+            border-radius: 0 !important;
+            background: transparent !important;
+        }
+        
         .container {
             max-width: 550px;
             margin: 0 auto;
         }
+        
         h1 {
             font-size: 1.8rem;
             text-align: center;
@@ -46,12 +54,14 @@
             background-clip: text;
             color: transparent;
         }
+        
         .subtitulo {
             text-align: center;
             color: #8b8ca8;
             font-size: 0.75rem;
             margin-bottom: 20px;
         }
+        
         .card {
             background: #131425;
             border-radius: 40px;
@@ -59,7 +69,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
         
-        /* Seletor de nota */
         .seletor-nota {
             background: #1e1f32;
             border-radius: 80px;
@@ -71,6 +80,7 @@
             justify-content: center;
             flex-wrap: wrap;
         }
+        
         select {
             background: #0a0a1a;
             color: #f97316;
@@ -85,11 +95,13 @@
             flex: 2;
             min-width: 120px;
         }
+        
         .botoes-acidente {
             display: flex;
             gap: 10px;
             flex: 1;
         }
+        
         .btn-acidente {
             background: #2d2e44;
             border: none;
@@ -102,15 +114,16 @@
             flex: 1;
             transition: 0.1s;
         }
+        
         .btn-acidente:active {
             transform: scale(0.96);
         }
         
-        /* Display da nota atual */
         .nota-atual-display {
             text-align: center;
             margin-bottom: 20px;
         }
+        
         .nota-atual-box {
             background: #0a0a1a;
             display: inline-block;
@@ -125,12 +138,12 @@
             cursor: pointer;
         }
         
-        /* Botões Maior/Menor */
         .modo-botoes {
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
         }
+        
         .btn-modo {
             flex: 1;
             background: #1e1f32;
@@ -143,16 +156,17 @@
             cursor: pointer;
             transition: 0.1s;
         }
+        
         .btn-modo.ativo {
             background: #f97316;
             color: #0a0a1a;
             box-shadow: 0 0 8px #f97316;
         }
         
-        /* Controles de Volume e Fade */
         .controles-painel {
             margin-bottom: 24px;
         }
+        
         .controle-item {
             background: #1a1b2f;
             border-radius: 60px;
@@ -163,12 +177,14 @@
             gap: 12px;
             flex-wrap: wrap;
         }
+        
         .controle-item label {
             font-size: 0.85rem;
             font-weight: bold;
             color: #facc15;
             min-width: 70px;
         }
+        
         .controle-item span {
             background: #0a0a1a;
             padding: 4px 12px;
@@ -178,6 +194,7 @@
             min-width: 55px;
             text-align: center;
         }
+        
         input[type="range"] {
             flex: 1;
             height: 6px;
@@ -185,6 +202,7 @@
             background: #2d2e44;
             border-radius: 10px;
         }
+        
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
@@ -194,7 +212,6 @@
             cursor: pointer;
         }
         
-        /* Notas sugeridas */
         .nota-item {
             background: #1a1b2f;
             border-radius: 28px;
@@ -202,6 +219,7 @@
             padding: 16px 18px;
             border-left: 4px solid #f97316;
         }
+        
         .nota-nome {
             font-size: 1.8rem;
             font-weight: 800;
@@ -211,6 +229,7 @@
             flex-wrap: wrap;
             margin-bottom: 6px;
         }
+        
         .intervalo {
             font-size: 0.75rem;
             background: #2a2c44;
@@ -218,11 +237,13 @@
             border-radius: 40px;
             color: #facc15;
         }
+        
         .descricao {
             font-size: 0.75rem;
             color: #9ca3af;
             margin-bottom: 14px;
         }
+        
         button.tocar {
             background: #f97316;
             border: none;
@@ -234,10 +255,12 @@
             cursor: pointer;
             transition: 0.05s linear;
         }
+        
         button.tocar:active {
             transform: scale(0.97);
             background: #fdba74;
         }
+        
         button.parar-global {
             background: #1e1f32;
             border: 1px solid #ec489a;
@@ -249,6 +272,7 @@
             margin-top: 18px;
             cursor: pointer;
         }
+        
         .status {
             text-align: center;
             font-size: 0.7rem;
@@ -258,6 +282,7 @@
             padding: 10px;
             border-radius: 60px;
         }
+        
         footer {
             text-align: center;
             font-size: 0.7rem;
@@ -266,6 +291,7 @@
             padding-top: 10px;
             border-top: 1px solid #1e1f32;
         }
+        
         .credito {
             color: #f97316;
             font-weight: bold;
@@ -275,10 +301,9 @@
 <body>
 <div class="container">
     <h1>🎤 SEGUNDA VOZ</h1>
-    <div class="subtitulo">Sua harmonia em 3 notas</div>
+    <div class="subtitulo">Fade ajustável · Volume · Sem sustos</div>
 
     <div class="card">
-        <!-- Seletor de nota base + acidentes -->
         <div class="seletor-nota">
             <select id="notaBaseSelect">
                 <option value="C">Dó</option>
@@ -295,18 +320,15 @@
             </div>
         </div>
 
-        <!-- Display da nota atual -->
         <div class="nota-atual-display">
             <div class="nota-atual-box" id="notaAtualDisplay">Fá</div>
         </div>
 
-        <!-- Botões Maior/Menor -->
         <div class="modo-botoes">
             <button id="btnMaior" class="btn-modo ativo">MAIOR</button>
             <button id="btnMenor" class="btn-modo">MENOR</button>
         </div>
 
-        <!-- Controles: Volume e Fade -->
         <div class="controles-painel">
             <div class="controle-item">
                 <label>🔊 Volume</label>
@@ -320,10 +342,8 @@
             </div>
         </div>
 
-        <!-- Lista de segundas vozes -->
         <div id="notasContainer"></div>
 
-        <!-- Botão parar -->
         <button id="pararTudoBtn" class="parar-global">🔇 PARAR TODAS AS NOTAS</button>
         <div class="status" id="statusMsg">🎧 Ajuste o Fade (0.1s a 1.5s) para o som ficar perfeito</div>
     </div>
@@ -334,7 +354,6 @@
 </div>
 
 <script>
-    // ========== DADOS MUSICAIS ==========
     const notaParaIndice = {
         'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11
     };
@@ -348,33 +367,21 @@
     };
     
     const tonsMaiores = {
-        'C':  { quinta: 'G',  terça: 'E',  setima: 'B'  },
-        'C#': { quinta: 'G#', terça: 'F',  setima: 'C'  },
-        'D':  { quinta: 'A',  terça: 'F#', setima: 'C#' },
-        'D#': { quinta: 'A#', terça: 'G',  setima: 'D'  },
-        'E':  { quinta: 'B',  terça: 'G#', setima: 'D#' },
-        'F':  { quinta: 'C',  terça: 'A',  setima: 'E'  },
-        'F#': { quinta: 'C#', terça: 'A#', setima: 'F'  },
-        'G':  { quinta: 'D',  terça: 'B',  setima: 'F#' },
-        'G#': { quinta: 'D#', terça: 'C',  setima: 'G'  },
-        'A':  { quinta: 'E',  terça: 'C#', setima: 'G#' },
-        'A#': { quinta: 'F',  terça: 'D',  setima: 'A'  },
-        'B':  { quinta: 'F#', terça: 'D#', setima: 'A#' }
+        'C': { quinta: 'G', terça: 'E', setima: 'B' }, 'C#': { quinta: 'G#', terça: 'F', setima: 'C' },
+        'D': { quinta: 'A', terça: 'F#', setima: 'C#' }, 'D#': { quinta: 'A#', terça: 'G', setima: 'D' },
+        'E': { quinta: 'B', terça: 'G#', setima: 'D#' }, 'F': { quinta: 'C', terça: 'A', setima: 'E' },
+        'F#': { quinta: 'C#', terça: 'A#', setima: 'F' }, 'G': { quinta: 'D', terça: 'B', setima: 'F#' },
+        'G#': { quinta: 'D#', terça: 'C', setima: 'G' }, 'A': { quinta: 'E', terça: 'C#', setima: 'G#' },
+        'A#': { quinta: 'F', terça: 'D', setima: 'A' }, 'B': { quinta: 'F#', terça: 'D#', setima: 'A#' }
     };
     
     const tonsMenores = {
-        'C':  { quinta: 'G',  terça: 'Eb', setima: 'Bb' },
-        'C#': { quinta: 'G#', terça: 'E',  setima: 'B'  },
-        'D':  { quinta: 'A',  terça: 'F',  setima: 'C'  },
-        'D#': { quinta: 'A#', terça: 'F#', setima: 'C#' },
-        'E':  { quinta: 'B',  terça: 'G',  setima: 'D'  },
-        'F':  { quinta: 'C',  terça: 'Ab', setima: 'Eb' },
-        'F#': { quinta: 'C#', terça: 'A',  setima: 'E'  },
-        'G':  { quinta: 'D',  terça: 'Bb', setima: 'F'  },
-        'G#': { quinta: 'D#', terça: 'B',  setima: 'F#' },
-        'A':  { quinta: 'E',  terça: 'C',  setima: 'G'  },
-        'A#': { quinta: 'F',  terça: 'C#', setima: 'G#' },
-        'B':  { quinta: 'F#', terça: 'D',  setima: 'A'  }
+        'C': { quinta: 'G', terça: 'Eb', setima: 'Bb' }, 'C#': { quinta: 'G#', terça: 'E', setima: 'B' },
+        'D': { quinta: 'A', terça: 'F', setima: 'C' }, 'D#': { quinta: 'A#', terça: 'F#', setima: 'C#' },
+        'E': { quinta: 'B', terça: 'G', setima: 'D' }, 'F': { quinta: 'C', terça: 'Ab', setima: 'Eb' },
+        'F#': { quinta: 'C#', terça: 'A', setima: 'E' }, 'G': { quinta: 'D', terça: 'Bb', setima: 'F' },
+        'G#': { quinta: 'D#', terça: 'B', setima: 'F#' }, 'A': { quinta: 'E', terça: 'C', setima: 'G' },
+        'A#': { quinta: 'F', terça: 'C#', setima: 'G#' }, 'B': { quinta: 'F#', terça: 'D', setima: 'A' }
     };
     
     const freqBase = {
@@ -383,41 +390,31 @@
         'Ab': 415.30, 'A': 440.00, 'A#': 466.16, 'Bb': 466.16, 'B': 493.88
     };
     
-    // Estado atual
     let notaNatural = 'F';
     let acidente = 0;
     let notaReal = 'F';
     let modoAtual = 'maior';
     
-    // Áudio
     let audioCtx = null;
     let oscAtual = null;
     let gainAtual = null;
     let volumeAtual = 0.35;
     let fadeTime = 0.6;
     
-    // ========== FUNÇÕES COM FADE AJUSTÁVEL ==========
-    
     function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         return audioCtx;
     }
     
-    function setVolume(valorPorcento) {
-        volumeAtual = Math.min(1, Math.max(0, valorPorcento / 100));
-        document.getElementById('volumePercent').innerText = Math.round(valorPorcento) + '%';
-        if (gainAtual && audioCtx) {
-            gainAtual.gain.linearRampToValueAtTime(volumeAtual, audioCtx.currentTime + fadeTime);
-        }
+    function setVolume(v) {
+        volumeAtual = Math.min(1, Math.max(0, v / 100));
+        document.getElementById('volumePercent').innerText = Math.round(v) + '%';
+        if (gainAtual && audioCtx) gainAtual.gain.linearRampToValueAtTime(volumeAtual, audioCtx.currentTime + fadeTime);
     }
     
-    function setFadeTime(valor) {
-        fadeTime = parseFloat(valor);
+    function setFadeTime(v) {
+        fadeTime = parseFloat(v);
         document.getElementById('fadeValue').innerText = fadeTime.toFixed(2) + 's';
         document.getElementById('statusMsg').innerHTML = `⏺ Fade ajustado para ${fadeTime.toFixed(2)} segundos`;
     }
@@ -426,38 +423,23 @@
         if (oscAtual && gainAtual && audioCtx) {
             gainAtual.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeTime);
             setTimeout(() => {
-                try { 
-                    if (oscAtual) {
-                        oscAtual.stop();
-                        oscAtual.disconnect();
-                    }
-                } catch(e) {}
-                oscAtual = null;
-                gainAtual = null;
+                try { if (oscAtual) oscAtual.stop(); oscAtual.disconnect(); } catch(e) {}
+                oscAtual = null; gainAtual = null;
             }, (fadeTime * 1000) + 50);
         } else if (oscAtual) {
-            try { 
-                oscAtual.stop();
-                oscAtual = null;
-            } catch(e) {}
+            try { oscAtual.stop(); } catch(e) {}
+            oscAtual = null;
         }
         document.getElementById('statusMsg').innerHTML = `🔇 Parado. Fade out de ${fadeTime.toFixed(2)}s`;
     }
     
     function tocarNotaConstante(notaNome, freqOriginal) {
         const ctx = initAudio();
-        
         if (oscAtual && gainAtual) {
             gainAtual.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
             setTimeout(() => {
-                try { 
-                    if (oscAtual) {
-                        oscAtual.stop();
-                        oscAtual.disconnect();
-                    }
-                } catch(e) {}
-                oscAtual = null;
-                gainAtual = null;
+                try { if (oscAtual) oscAtual.stop(); oscAtual.disconnect(); } catch(e) {}
+                oscAtual = null; gainAtual = null;
                 tocarNovo(notaNome, freqOriginal);
             }, (fadeTime * 1000) + 30);
         } else {
@@ -468,76 +450,38 @@
     function tocarNovo(notaNome, freqOriginal) {
         const ctx = audioCtx;
         if (!ctx) return;
-        
         try {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            
             osc.type = 'triangle';
             osc.frequency.value = freqOriginal;
-            
             gain.gain.value = 0;
             gain.gain.linearRampToValueAtTime(volumeAtual, ctx.currentTime + fadeTime);
-            
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start();
-            
             oscAtual = osc;
             gainAtual = gain;
-            
             document.getElementById('statusMsg').innerHTML = `🎵 Drone: ${notaNome} · ${freqOriginal.toFixed(1)} Hz · Fade ${fadeTime.toFixed(2)}s · vol ${Math.round(volumeAtual*100)}%`;
-            
-            osc.onended = () => {
-                if (oscAtual === osc) {
-                    oscAtual = null;
-                    gainAtual = null;
-                }
-            };
-        } catch(e) {
-            document.getElementById('statusMsg').innerHTML = '⚠️ Toque novamente para ativar o áudio';
-        }
+            osc.onended = () => { if (oscAtual === osc) { oscAtual = null; gainAtual = null; } };
+        } catch(e) { document.getElementById('statusMsg').innerHTML = '⚠️ Toque novamente para ativar o áudio'; }
     }
-    
-    // ========== FUNÇÕES MUSICAIS ==========
     
     function atualizarNotaReal() {
         let indiceBase = notaParaIndice[notaNatural];
         let novoIndice = (indiceBase + acidente + 12) % 12;
         notaReal = escalaCromatica[novoIndice];
-        
-        let nomeExibicao = nomesDisplay[notaReal] || notaReal;
-        document.getElementById('notaAtualDisplay').innerText = nomeExibicao;
+        document.getElementById('notaAtualDisplay').innerText = nomesDisplay[notaReal] || notaReal;
     }
     
-    function setNotaNatural(nota) {
-        notaNatural = nota;
-        atualizarNotaReal();
-        atualizarTudo();
-    }
-    
+    function setNotaNatural(nota) { notaNatural = nota; atualizarNotaReal(); atualizarTudo(); }
     function aplicarAcidente(tipo) {
-        if (tipo === 'sustenido') {
-            if (acidente === 1) return;
-            acidente = 1;
-        } else if (tipo === 'bemol') {
-            if (acidente === -1) return;
-            acidente = -1;
-        }
-        atualizarNotaReal();
-        atualizarTudo();
+        if (tipo === 'sustenido') { if (acidente === 1) return; acidente = 1; }
+        else if (tipo === 'bemol') { if (acidente === -1) return; acidente = -1; }
+        atualizarNotaReal(); atualizarTudo();
     }
-    
-    function resetAcidente() {
-        acidente = 0;
-        atualizarNotaReal();
-        atualizarTudo();
-    }
-    
-    function setModo(modo) {
-        modoAtual = modo;
-        atualizarTudo();
-    }
+    function resetAcidente() { acidente = 0; atualizarNotaReal(); atualizarTudo(); }
+    function setModo(modo) { modoAtual = modo; atualizarTudo(); }
     
     function atualizarTudo() {
         if (modoAtual === 'maior') {
@@ -547,7 +491,6 @@
             document.getElementById('btnMenor').classList.add('ativo');
             document.getElementById('btnMaior').classList.remove('ativo');
         }
-        
         pararTudo();
         renderizarNotas();
     }
@@ -555,10 +498,8 @@
     function obterNotasPorTom() {
         const harmonias = modoAtual === 'maior' ? tonsMaiores[notaReal] : tonsMenores[notaReal];
         if (!harmonias) return [];
-        
         const tipoTerca = modoAtual === 'menor' ? 'Terça menor · Triste / Soul' : 'Terça maior · Emocional / Doce';
         const descTerca = modoAtual === 'menor' ? 'Profundidade e melancolia' : 'Clássica, doce e alegre';
-        
         return [
             { notaRaw: harmonias.quinta, tipo: 'Quinta · Estável', descricao: 'Perfeita para harmonia, combina com tudo' },
             { notaRaw: harmonias.terça, tipo: tipoTerca, descricao: descTerca },
@@ -570,23 +511,16 @@
         const container = document.getElementById('notasContainer');
         container.innerHTML = '';
         const notas = obterNotasPorTom();
-        
         notas.forEach(op => {
             if (!op.notaRaw) return;
             let notaExibida = nomesDisplay[op.notaRaw] || op.notaRaw;
             let freq = freqBase[op.notaRaw];
             if (!freq) return;
-            
             const div = document.createElement('div');
             div.className = 'nota-item';
-            div.innerHTML = `
-                <div class="nota-nome">${notaExibida} <span class="intervalo">${op.tipo}</span></div>
-                <div class="descricao">${op.descricao}</div>
-                <button class="tocar" data-nota="${notaExibida}" data-freq="${freq}">▶ Tocar drone · ${notaExibida}</button>
-            `;
+            div.innerHTML = `<div class="nota-nome">${notaExibida} <span class="intervalo">${op.tipo}</span></div><div class="descricao">${op.descricao}</div><button class="tocar" data-nota="${notaExibida}" data-freq="${freq}">▶ Tocar drone · ${notaExibida}</button>`;
             container.appendChild(div);
         });
-        
         document.querySelectorAll('.tocar').forEach(btn => {
             const nota = btn.dataset.nota;
             const freq = parseFloat(btn.dataset.freq);
@@ -597,10 +531,7 @@
         });
     }
     
-    // ========== EVENTOS ==========
-    document.getElementById('notaBaseSelect').addEventListener('change', (e) => {
-        setNotaNatural(e.target.value);
-    });
+    document.getElementById('notaBaseSelect').addEventListener('change', (e) => setNotaNatural(e.target.value));
     document.getElementById('btnSustenido').addEventListener('click', () => aplicarAcidente('sustenido'));
     document.getElementById('btnBemol').addEventListener('click', () => aplicarAcidente('bemol'));
     document.getElementById('notaAtualDisplay').addEventListener('click', resetAcidente);
@@ -610,7 +541,6 @@
     document.getElementById('volumeSlider').addEventListener('input', (e) => setVolume(parseInt(e.target.value)));
     document.getElementById('fadeSlider').addEventListener('input', (e) => setFadeTime(e.target.value));
     
-    // Inicialização
     atualizarNotaReal();
     atualizarTudo();
     setVolume(35);
