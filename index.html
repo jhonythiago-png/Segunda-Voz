@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Segunda Vocal Pro - Fade Ajustável</title>
+    
+    <!-- Título do app -->
+    <title>Segunda Vocal - Jhony Beraldo</title>
+    
+    <!-- ÍCONE PARA O CELULAR (logo.png) -->
+    <link rel="icon" type="image/png" sizes="512x512" href="logo.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="logo.png">
+    <link rel="apple-touch-icon-precomposed" sizes="512x512" href="logo.png">
+    
+    <!-- Configuração para instalar como app no celular -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Segunda Vocal">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0a0a1a">
+    <meta name="background-color" content="#0a0a1a">
+    
     <style>
         * {
             box-sizing: border-box;
@@ -378,7 +394,7 @@
     let oscAtual = null;
     let gainAtual = null;
     let volumeAtual = 0.35;
-    let fadeTime = 0.6;  // segundos (padrão 0.6)
+    let fadeTime = 0.6;
     
     // ========== FUNÇÕES COM FADE AJUSTÁVEL ==========
     
@@ -408,7 +424,6 @@
     
     function pararTudo() {
         if (oscAtual && gainAtual && audioCtx) {
-            // FADE OUT com o tempo ajustado pelo usuário
             gainAtual.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeTime);
             setTimeout(() => {
                 try { 
@@ -432,7 +447,6 @@
     function tocarNotaConstante(notaNome, freqOriginal) {
         const ctx = initAudio();
         
-        // Para o som atual com fade out suave ANTES de tocar o novo
         if (oscAtual && gainAtual) {
             gainAtual.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
             setTimeout(() => {
@@ -444,7 +458,6 @@
                 } catch(e) {}
                 oscAtual = null;
                 gainAtual = null;
-                // Só toca o novo depois que o anterior terminou o fade
                 tocarNovo(notaNome, freqOriginal);
             }, (fadeTime * 1000) + 30);
         } else {
@@ -463,10 +476,7 @@
             osc.type = 'triangle';
             osc.frequency.value = freqOriginal;
             
-            // Começa mudo (volume 0)
             gain.gain.value = 0;
-            
-            // FADE IN com o tempo ajustado pelo usuário
             gain.gain.linearRampToValueAtTime(volumeAtual, ctx.currentTime + fadeTime);
             
             osc.connect(gain);
@@ -485,7 +495,6 @@
                 }
             };
         } catch(e) {
-            console.log("Erro ao tocar:", e);
             document.getElementById('statusMsg').innerHTML = '⚠️ Toque novamente para ativar o áudio';
         }
     }
@@ -607,7 +616,6 @@
     setVolume(35);
     setFadeTime(0.6);
     
-    // Ativa áudio no primeiro toque
     function ativarAudio() {
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
