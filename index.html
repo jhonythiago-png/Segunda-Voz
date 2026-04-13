@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Segunda Vocal - Seletor de Notas</title>
+    <title>Segunda Vocal Pro - Fade Suave</title>
     <style>
         * {
             box-sizing: border-box;
@@ -106,6 +106,7 @@
             letter-spacing: 2px;
             color: #f97316;
             border: 1px solid #f97316;
+            cursor: pointer;
         }
         
         /* Botões Maior/Menor */
@@ -254,7 +255,7 @@
 <body>
 <div class="container">
     <h1>🎤 SEGUNDA VOZ</h1>
-    <div class="subtitulo">Selecione a nota · MAIOR/MENOR · # sustenido · b bemol</div>
+    <div class="subtitulo">Fade suave · Sem sustos · Volume ajustável</div>
 
     <div class="card">
         <!-- Seletor de nota base + acidentes -->
@@ -288,8 +289,8 @@
         <!-- Volume -->
         <div class="volume-control">
             <label>🔊 Volume</label>
-            <input type="range" id="volumeSlider" min="0" max="100" value="38">
-            <span id="volumePercent" class="volume-valor">38%</span>
+            <input type="range" id="volumeSlider" min="0" max="100" value="35">
+            <span id="volumePercent" class="volume-valor">35%</span>
         </div>
 
         <!-- Lista de segundas vozes -->
@@ -297,7 +298,7 @@
 
         <!-- Botão parar -->
         <button id="pararTudoBtn" class="parar-global">🔇 PARAR TODAS AS NOTAS</button>
-        <div class="status" id="statusMsg">🎧 Selecione a nota, acidente e modo</div>
+        <div class="status" id="statusMsg">🎧 Fade suave de 0.5s - sem sustos</div>
     </div>
 
     <footer>
@@ -307,28 +308,18 @@
 
 <script>
     // ========== DADOS MUSICAIS ==========
-    // Mapeamento de nota natural para seu índice na escala cromática
     const notaParaIndice = {
-        'C': 0,   // Dó
-        'D': 2,   // Ré
-        'E': 4,   // Mi
-        'F': 5,   // Fá
-        'G': 7,   // Sol
-        'A': 9,   // Lá
-        'B': 11   // Si
+        'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11
     };
     
-    // Escala cromática (12 notas)
     const escalaCromatica = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     
-    // Nomes amigáveis para exibição
     const nomesDisplay = {
         'C': 'Dó', 'C#': 'Dó#', 'D': 'Ré', 'D#': 'Ré#', 'E': 'Mi',
         'F': 'Fá', 'F#': 'Fá#', 'G': 'Sol', 'G#': 'Sol#', 'A': 'Lá',
         'A#': 'Lá#', 'B': 'Si', 'Db': 'Ré♭', 'Eb': 'Mi♭', 'Gb': 'Sol♭', 'Ab': 'Lá♭', 'Bb': 'Si♭'
     };
     
-    // Mapeamento de tons MAIORES (campo harmônico)
     const tonsMaiores = {
         'C':  { quinta: 'G',  terça: 'E',  setima: 'B'  },
         'C#': { quinta: 'G#', terça: 'F',  setima: 'C'  },
@@ -344,7 +335,6 @@
         'B':  { quinta: 'F#', terça: 'D#', setima: 'A#' }
     };
     
-    // Mapeamento de tons MENORES (campo harmônico menor natural)
     const tonsMenores = {
         'C':  { quinta: 'G',  terça: 'Eb', setima: 'Bb' },
         'C#': { quinta: 'G#', terça: 'E',  setima: 'B'  },
@@ -360,7 +350,6 @@
         'B':  { quinta: 'F#', terça: 'D',  setima: 'A'  }
     };
     
-    // Frequências base (oitava central)
     const freqBase = {
         'C': 261.63, 'C#': 277.18, 'Db': 277.18, 'D': 293.66, 'D#': 311.13, 'Eb': 311.13,
         'E': 329.63, 'F': 349.23, 'F#': 369.99, 'Gb': 369.99, 'G': 392.00, 'G#': 415.30,
@@ -368,18 +357,19 @@
     };
     
     // Estado atual
-    let notaNatural = 'F';       // C, D, E, F, G, A, B
-    let acidente = 0;           // -1 (bemol), 0 (natural), +1 (sustenido)
-    let notaReal = 'F';         // notaReal = notaNatural + acidente (ex: F + # = F#)
-    let modoAtual = 'maior';    // 'maior' ou 'menor'
+    let notaNatural = 'F';
+    let acidente = 0;
+    let notaReal = 'F';
+    let modoAtual = 'maior';
     
     // Áudio
     let audioCtx = null;
     let oscAtual = null;
     let gainAtual = null;
-    let volumeAtual = 0.38;
+    let volumeAtual = 0.35;
     
-    // ========== FUNÇÕES ==========
+    // ========== FUNÇÕES COM FADE PROFISSIONAL ==========
+    
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -394,97 +384,136 @@
         volumeAtual = Math.min(1, Math.max(0, valorPorcento / 100));
         document.getElementById('volumePercent').innerText = Math.round(valorPorcento) + '%';
         if (gainAtual && audioCtx) {
-            gainAtual.gain.linearRampToValueAtTime(volumeAtual, audioCtx.currentTime + 0.02);
+            // Fade suave ao mudar volume enquanto toca
+            gainAtual.gain.linearRampToValueAtTime(volumeAtual, audioCtx.currentTime + 0.1);
         }
+    }
+    
+    function pararTudo() {
+        if (oscAtual && gainAtual && audioCtx) {
+            // FADE OUT de 0.4 segundos (bem suave)
+            gainAtual.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+            setTimeout(() => {
+                try { 
+                    if (oscAtual) {
+                        oscAtual.stop();
+                        oscAtual.disconnect();
+                    }
+                } catch(e) {}
+                oscAtual = null;
+                gainAtual = null;
+            }, 450);
+        } else if (oscAtual) {
+            try { 
+                oscAtual.stop();
+                oscAtual = null;
+            } catch(e) {}
+        }
+        document.getElementById('statusMsg').innerHTML = '🔇 Parado. Fade out suave de 0.4s';
     }
     
     function tocarNotaConstante(notaNome, freqOriginal) {
         const ctx = initAudio();
         
+        // Para o som atual com fade out suave ANTES de tocar o novo
         if (oscAtual && gainAtual) {
-            gainAtual.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.03);
+            gainAtual.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.35);
             setTimeout(() => {
-                try { if (oscAtual) oscAtual.stop(); } catch(e) {}
+                try { 
+                    if (oscAtual) {
+                        oscAtual.stop();
+                        oscAtual.disconnect();
+                    }
+                } catch(e) {}
                 oscAtual = null;
-            }, 50);
+                gainAtual = null;
+                // Só toca o novo depois que o anterior terminou o fade
+                tocarNovo(notaNome, freqOriginal);
+            }, 400);
+        } else {
+            tocarNovo(notaNome, freqOriginal);
         }
-        
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = freqOriginal;
-        gain.gain.value = 0;
-        gain.gain.linearRampToValueAtTime(volumeAtual, ctx.currentTime + 0.04);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        
-        oscAtual = osc;
-        gainAtual = gain;
-        
-        document.getElementById('statusMsg').innerHTML = `🎵 Drone: ${notaNome} · ${freqOriginal.toFixed(1)} Hz · volume ${Math.round(volumeAtual*100)}%`;
-        
-        osc.onended = () => {
-            if (oscAtual === osc) oscAtual = null;
-        };
     }
     
-    function pararTudo() {
-        if (oscAtual && gainAtual && audioCtx) {
-            gainAtual.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.03);
-            setTimeout(() => {
-                try { if (oscAtual) oscAtual.stop(); } catch(e) {}
-                oscAtual = null;
-            }, 50);
-        } else if (oscAtual) {
-            try { oscAtual.stop(); } catch(e) {}
-            oscAtual = null;
+    function tocarNovo(notaNome, freqOriginal) {
+        const ctx = audioCtx;
+        if (!ctx) return;
+        
+        try {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.type = 'triangle';
+            osc.frequency.value = freqOriginal;
+            
+            // Começa mudo (volume 0)
+            gain.gain.value = 0;
+            
+            // FADE IN de 0.4 segundos (entrada super suave)
+            gain.gain.linearRampToValueAtTime(volumeAtual, ctx.currentTime + 0.4);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            
+            oscAtual = osc;
+            gainAtual = gain;
+            
+            document.getElementById('statusMsg').innerHTML = `🎵 Drone: ${notaNome} · ${freqOriginal.toFixed(1)} Hz · Fade in 0.4s · volume ${Math.round(volumeAtual*100)}%`;
+            
+            osc.onended = () => {
+                if (oscAtual === osc) {
+                    oscAtual = null;
+                    gainAtual = null;
+                }
+            };
+        } catch(e) {
+            console.log("Erro ao tocar:", e);
+            document.getElementById('statusMsg').innerHTML = '⚠️ Toque novamente para ativar o áudio';
         }
-        document.getElementById('statusMsg').innerHTML = '🔇 Parado. Selecione nota e modo.';
     }
     
-    // Atualiza a notaReal com base na notaNatural e acidente
+    // ========== FUNÇÕES MUSICAIS ==========
+    
     function atualizarNotaReal() {
         let indiceBase = notaParaIndice[notaNatural];
         let novoIndice = (indiceBase + acidente + 12) % 12;
         notaReal = escalaCromatica[novoIndice];
         
-        // Atualiza display
         let nomeExibicao = nomesDisplay[notaReal] || notaReal;
         document.getElementById('notaAtualDisplay').innerText = nomeExibicao;
     }
     
-    // Altera a nota natural via dropdown
     function setNotaNatural(nota) {
         notaNatural = nota;
         atualizarNotaReal();
         atualizarTudo();
     }
     
-    // Aplica sustenido ou bemol
     function aplicarAcidente(tipo) {
         if (tipo === 'sustenido') {
-            if (acidente === 1) return; // já sustenido
+            if (acidente === 1) return;
             acidente = 1;
         } else if (tipo === 'bemol') {
             if (acidente === -1) return;
             acidente = -1;
-        } else if (tipo === 'natural') {
-            acidente = 0;
         }
         atualizarNotaReal();
         atualizarTudo();
     }
     
-    // Alterna modo Maior/Menor
+    function resetAcidente() {
+        acidente = 0;
+        atualizarNotaReal();
+        atualizarTudo();
+    }
+    
     function setModo(modo) {
         modoAtual = modo;
         atualizarTudo();
     }
     
-    // Atualiza toda a interface (modo, notas sugeridas)
     function atualizarTudo() {
-        // Estilo dos botões Maior/Menor
         if (modoAtual === 'maior') {
             document.getElementById('btnMaior').classList.add('ativo');
             document.getElementById('btnMenor').classList.remove('ativo');
@@ -493,10 +522,7 @@
             document.getElementById('btnMaior').classList.remove('ativo');
         }
         
-        // Para o som atual
         pararTudo();
-        
-        // Renderiza as notas sugeridas
         renderizarNotas();
     }
     
@@ -551,12 +577,7 @@
     });
     document.getElementById('btnSustenido').addEventListener('click', () => aplicarAcidente('sustenido'));
     document.getElementById('btnBemol').addEventListener('click', () => aplicarAcidente('bemol'));
-    // Toque duplo no display volta ao natural? Opcional: clique no display reseta acidente
-    document.getElementById('notaAtualDisplay').addEventListener('click', () => {
-        acidente = 0;
-        atualizarNotaReal();
-        atualizarTudo();
-    });
+    document.getElementById('notaAtualDisplay').addEventListener('click', resetAcidente);
     document.getElementById('btnMaior').addEventListener('click', () => setModo('maior'));
     document.getElementById('btnMenor').addEventListener('click', () => setModo('menor'));
     document.getElementById('pararTudoBtn').addEventListener('click', pararTudo);
@@ -565,12 +586,13 @@
     // Inicialização
     atualizarNotaReal();
     atualizarTudo();
-    setVolume(38);
+    setVolume(35);
     
     // Ativa áudio no primeiro toque
     function ativarAudio() {
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
+            document.getElementById('statusMsg').innerHTML = '🎧 Áudio ativado! Fade suave de 0.4s';
         }
     }
     document.body.addEventListener('touchstart', ativarAudio, { once: true });
